@@ -3,6 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <link rel="icon" type="image/png" href="aya logo.png">
     <title>AYA Jewellery</title>
 
@@ -12,151 +14,127 @@
             text-align: center;
             background: linear-gradient(135deg, #f2f4f8, #e6ebf2);
             margin: 0;
-            padding: 30px;
+            padding: 20px;
         }
 
         h2 {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             color: #333;
         }
 
-        /* Editor container */
+        /* editor */
 
         #editor {
             position: relative;
             display: inline-block;
             background: white;
-            padding: 15px;
+            padding: 10px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 420px;
         }
 
-        /* Textbox */
+        /* video */
 
-        input[type="text"] {
-            width: 280px;
-            padding: 12px 15px;
-            font-size: 15px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            outline: none;
-            transition: all .25s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        input[type="text"]:focus {
-            border-color: #4a90e2;
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
-        }
-
-        /* Buttons */
-
-        button {
-            padding: 11px 20px;
-            margin: 6px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 500;
-            cursor: pointer;
-            background: #4a90e2;
-            color: white;
-            transition: all .25s;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-        }
-
-        button:hover {
-            background: #357bd8;
-            transform: translateY(-1px);
-            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
-        }
-
-        button:active {
-            transform: translateY(0px);
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Checkbox styling */
-
-        label {
-            font-size: 15px;
-            color: #333;
-            cursor: pointer;
-        }
-
-        /* Output canvas */
-
-        canvas {
-            margin-top: 25px;
+        #video {
+            width: 100%;
+            height: auto;
             border-radius: 10px;
-            background: white;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
-        /* Crop box */
+        /* crop */
 
         #cropBox {
             position: absolute;
             border: 3px dashed #ff4d4d;
-            width: 260px;
-            height: 260px;
+            width: 250px;
+            height: 250px;
             border-radius: 4px;
         }
 
-        /* Logo */
+        /* logo */
 
         #logo {
             position: absolute;
-            width: 100px;
+            width: 80px;
             cursor: move;
         }
 
-        /* Input container */
+        /* input */
 
         .input-group {
             display: flex;
             flex-direction: column;
             align-items: center;
             margin: 20px 0;
+            width: 100%;
         }
-
-        /* Label */
-
-        .input-group label {
-            font-size: 14px;
-            color: #555;
-            margin-bottom: 6px;
-            font-weight: 500;
-        }
-
-        /* Textfield */
 
         .input-group input {
-            width: 320px;
-            padding: 12px 16px;
-            font-size: 15px;
+            width: 90%;
+            max-width: 320px;
+            padding: 12px;
+            font-size: 16px;
             border-radius: 10px;
             border: 1px solid #d0d5dd;
             outline: none;
-            background: white;
-            transition: all .25s ease;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
 
-        /* Focus effect */
-
         .input-group input:focus {
             border-color: #4a90e2;
-            box-shadow:
-                0 0 0 3px rgba(74, 144, 226, 0.15),
-                0 4px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
         }
 
-        /* Placeholder */
+        /* buttons */
 
-        .input-group input::placeholder {
-            color: #aaa;
-            font-style: italic;
+        button {
+            padding: 12px 18px;
+            margin: 6px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            background: #4a90e2;
+            color: white;
+            width: 140px;
+        }
+
+        button:hover {
+            background: #357bd8;
+        }
+
+        /* canvas */
+
+        canvas {
+            margin-top: 20px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 420px;
+            height: auto;
+        }
+
+        /* mobile adjustments */
+
+        @media (max-width:500px) {
+
+            #cropBox {
+                width: 160px;
+                height: 160px;
+            }
+
+            #logo {
+                width: 60px;
+            }
+
+            button {
+                width: 45%;
+            }
+
         }
     </style>
 </head>
@@ -167,7 +145,7 @@
 
     <div id="editor">
 
-        <video id="video" width="420px" autoplay></video>
+        <video id="video" autoplay playsinline></video>
 
         <div id="cropBox"></div>
 
@@ -178,11 +156,9 @@
     <br><br>
 
     <div class="input-group">
-        <label for="caption">Caption</label>
+        <label>Caption</label>
         <input id="caption" type="text" placeholder="Add a little bit of body text">
     </div>
-
-    <br>
 
     <label>
         <input type="checkbox" id="showLogo" checked>
@@ -196,7 +172,7 @@
 
     <br><br>
 
-    <canvas id="output" width="500" height="500"></canvas>
+    <canvas id="output"></canvas>
 
     <script>
 
@@ -207,16 +183,18 @@
         const tempCanvas = document.createElement("canvas");
         const tctx = tempCanvas.getContext("2d");
 
-        tempCanvas.width = 420;
-        tempCanvas.height = 320;
-
         navigator.mediaDevices.getUserMedia({ video: true })
             .then(stream => {
                 video.srcObject = stream;
             });
 
         function capture() {
+
+            tempCanvas.width = video.videoWidth;
+            tempCanvas.height = video.videoHeight;
+
             tctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+
         }
 
         function dragElement(el) {
@@ -250,9 +228,6 @@
 
         dragElement(logo);
 
-        cropBox.style.left = "80px";
-        cropBox.style.top = "40px";
-
         logo.style.left = "20px";
         logo.style.top = "20px";
 
@@ -261,79 +236,76 @@
 
         function generate() {
 
-    capture();
+            capture();
 
-    const cropRect = cropBox.getBoundingClientRect();
-    const videoRect = video.getBoundingClientRect();
+            const cropRect = cropBox.getBoundingClientRect();
+            const videoRect = video.getBoundingClientRect();
 
-    let sx = cropRect.left - videoRect.left;
-    let sy = cropRect.top - videoRect.top;
-    let size = cropRect.width;
+            let scaleX = video.videoWidth / videoRect.width;
+            let scaleY = video.videoHeight / videoRect.height;
 
-    const border = 10;
-    const bottomSpace = 30;
-    const finalSize = 400;
+            let sx = (cropRect.left - videoRect.left) * scaleX;
+            let sy = (cropRect.top - videoRect.top) * scaleY;
+            let size = cropRect.width * scaleX;
 
-    const scaleFactor = 3;
+            const border = 10;
+            const bottomSpace = 30;
+            const finalSize = 400;
 
-    // reset transform
-    octx.setTransform(1,0,0,1,0,0);
+            const scaleFactor = 3;
 
-    output.width = (finalSize + border * 2) * scaleFactor;
-    output.height = (finalSize + border + bottomSpace) * scaleFactor;
+            octx.setTransform(1, 0, 0, 1, 0, 0);
 
-    output.style.width = (finalSize + border * 2) + "px";
-    output.style.height = (finalSize + border + bottomSpace) + "px";
+            output.width = (finalSize + border * 2) * scaleFactor;
+            output.height = (finalSize + border + bottomSpace) * scaleFactor;
 
-    octx.scale(scaleFactor, scaleFactor);
+            octx.scale(scaleFactor, scaleFactor);
 
-    octx.imageSmoothingEnabled = true;
-    octx.imageSmoothingQuality = "high";
+            octx.fillStyle = "white";
+            octx.fillRect(0, 0, finalSize + border * 2, finalSize + border + bottomSpace);
 
-    octx.fillStyle = "white";
-    octx.fillRect(0,0,finalSize + border * 2, finalSize + border + bottomSpace);
+            octx.drawImage(
+                tempCanvas,
+                sx, sy, size, size,
+                border, border,
+                finalSize, finalSize
+            );
 
-    // draw photo
-    octx.drawImage(
-        tempCanvas,
-        sx, sy, size, size,
-        border, border,
-        finalSize, finalSize
-    );
+            if (document.getElementById("showLogo").checked) {
 
-    if(document.getElementById("showLogo").checked){
+                let logoRect = logo.getBoundingClientRect();
 
-        let logoRect = logo.getBoundingClientRect();
+                let lx = (logoRect.left - videoRect.left) * scaleX;
+                let ly = (logoRect.top - videoRect.top) * scaleY;
 
-        let lx = logoRect.left - videoRect.left;
-        let ly = logoRect.top - videoRect.top;
+                let scale = finalSize / size;
 
-        let scale = finalSize / size;
+                const logoWidth = 100;
+                const logoHeight = logo.naturalHeight * (logoWidth / logo.naturalWidth);
 
-        const logoWidth = 100;
-        const logoHeight = logo.naturalHeight * (logoWidth / logo.naturalWidth);
+                octx.drawImage(
+                    logo,
+                    (lx - sx) * scale + border,
+                    (ly - sy) * scale + border,
+                    logoWidth,
+                    logoHeight
+                );
 
-        octx.drawImage(
-            logo,
-            (lx - sx) * scale + border,
-            (ly - sy) * scale + border,
-            logoWidth,
-            logoHeight
-        );
-    }
+            }
 
-    let text = document.getElementById("caption").value;
+            let text = document.getElementById("caption").value;
 
-    octx.fillStyle="black";
-    octx.font="20px Arial";
-    octx.textAlign="center";
+            octx.fillStyle = "black";
+            octx.font = "20px Arial";
+            octx.textAlign = "center";
 
-    octx.fillText(
-        text,
-        (finalSize + border * 2)/1.3,
-        finalSize + border + 20
-    );
-}
+            octx.fillText(
+                text,
+                (finalSize + border * 2) / 2,
+                finalSize + border + 20
+            );
+
+        }
 
         function download() {
 
@@ -345,6 +317,18 @@
             link.click();
 
         }
+
+        video.addEventListener("loadedmetadata", () => {
+
+    const cropSize = cropBox.offsetWidth;
+
+    const left = (video.clientWidth - cropSize) / 2;
+    const top = (video.clientHeight - cropSize) / 2;
+
+    cropBox.style.left = left + "px";
+    cropBox.style.top = top + "px";
+
+});
 
     </script>
 
