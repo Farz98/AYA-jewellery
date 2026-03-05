@@ -4,137 +4,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="icon" type="image/png" href="aya logo.png">
     <title>AYA Jewellery</title>
 
     <style>
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            text-align: center;
+            font-family: 'Segoe UI', Arial;
             background: linear-gradient(135deg, #f2f4f8, #e6ebf2);
             margin: 0;
             padding: 20px;
+            text-align: center;
         }
 
         h2 {
-            margin-bottom: 20px;
-            color: #333;
+            margin-bottom: 15px;
         }
-
-        /* editor */
 
         #editor {
             position: relative;
             display: inline-block;
             background: white;
-            padding: 10px;
+            padding: 12px;
             border-radius: 12px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 420px;
         }
-
-        /* video */
 
         #video {
-            width: 100%;
-            height: auto;
+            width: 92vw;
+            max-width: 420px;
+            aspect-ratio: 1/1;
+            object-fit: cover;
             border-radius: 10px;
+            cursor: pointer;
         }
-
-        /* crop */
-
-        #cropBox {
-            position: absolute;
-            border: 3px dashed #ff4d4d;
-            width: 250px;
-            height: 250px;
-            border-radius: 4px;
-        }
-
-        /* logo */
 
         #logo {
             position: absolute;
-            width: 80px;
+            width: 90px;
             cursor: move;
+            top: 20px;
+            left: 20px;
         }
 
-        /* input */
-
         .input-group {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px 0;
-            width: 100%;
+            margin-top: 20px;
         }
 
         .input-group input {
-            width: 90%;
+            width: 85vw;
             max-width: 320px;
             padding: 12px;
-            font-size: 16px;
             border-radius: 10px;
-            border: 1px solid #d0d5dd;
-            outline: none;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border: 1px solid #ccc;
+            font-size: 15px;
         }
-
-        .input-group input:focus {
-            border-color: #4a90e2;
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
-        }
-
-        /* buttons */
 
         button {
             padding: 12px 18px;
-            margin: 6px;
+            margin: 8px;
             border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
+            border-radius: 8px;
             background: #4a90e2;
             color: white;
-            width: 140px;
+            font-size: 15px;
+            cursor: pointer;
         }
-
-        button:hover {
-            background: #357bd8;
-        }
-
-        /* canvas */
 
         canvas {
             margin-top: 20px;
+            max-width: 95vw;
             border-radius: 10px;
             background: white;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            width: 90%;
-            max-width: 420px;
-            height: auto;
-        }
-
-        /* mobile adjustments */
-
-        @media (max-width:500px) {
-
-            #cropBox {
-                width: 160px;
-                height: 160px;
-            }
-
-            #logo {
-                width: 60px;
-            }
-
-            button {
-                width: 45%;
-            }
-
         }
     </style>
 </head>
@@ -147,60 +88,66 @@
 
         <video id="video" autoplay playsinline></video>
 
-        <div id="cropBox"></div>
-
         <img id="logo" src="aya logo.png">
 
     </div>
 
-    <br><br>
-
     <div class="input-group">
-        <label>Caption</label>
-        <input id="caption" type="text" placeholder="Add a little bit of body text">
+        <input id="caption" placeholder="Add caption">
     </div>
 
+    <br>
+
     <label>
-        <input type="checkbox" id="showLogo" checked>
-        Show Logo
+        <input type="checkbox" id="showLogo" checked> Show Logo
     </label>
 
-    <br><br>
+    <br>
 
     <button onclick="generate()">Generate</button>
     <button onclick="download()">Download</button>
 
-    <br><br>
+    <br>
 
     <canvas id="output"></canvas>
 
     <script>
 
         const video = document.getElementById("video");
-        const cropBox = document.getElementById("cropBox");
         const logo = document.getElementById("logo");
+        const output = document.getElementById("output");
+        const octx = output.getContext("2d");
 
         const tempCanvas = document.createElement("canvas");
         const tctx = tempCanvas.getContext("2d");
 
-        navigator.mediaDevices.getUserMedia({ video: true })
+        let zoom = 1;
+
+        navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: { ideal: "environment" }
+            }
+        })
             .then(stream => {
                 video.srcObject = stream;
             });
+
+        video.addEventListener("click", () => {
+            capture();
+        });
 
         function capture() {
 
             tempCanvas.width = video.videoWidth;
             tempCanvas.height = video.videoHeight;
 
-            tctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
+            tctx.drawImage(video, 0, 0);
 
         }
 
         function dragElement(el) {
 
-            let offsetX = 0;
-            let offsetY = 0;
+            let offsetX, offsetY;
 
             el.onmousedown = (e) => {
 
@@ -211,15 +158,16 @@
 
                     let rect = document.getElementById("editor").getBoundingClientRect();
 
-                    el.style.left = (e.clientX - rect.left - offsetX) + "px";
-                    el.style.top = (e.clientY - rect.top - offsetY) + "px";
+                    let x = e.clientX - rect.left - offsetX;
+                    let y = e.clientY - rect.top - offsetY;
+
+                    el.style.left = x + "px";
+                    el.style.top = y + "px";
 
                 }
 
                 document.onmouseup = () => {
-
                     document.onmousemove = null;
-
                 }
 
             }
@@ -228,41 +176,32 @@
 
         dragElement(logo);
 
-        logo.style.left = "20px";
-        logo.style.top = "20px";
-
-        const output = document.getElementById("output");
-        const octx = output.getContext("2d");
-
         function generate() {
 
             capture();
 
-            const cropRect = cropBox.getBoundingClientRect();
-            const videoRect = video.getBoundingClientRect();
-
-            let scaleX = video.videoWidth / videoRect.width;
-            let scaleY = video.videoHeight / videoRect.height;
-
-            let sx = (cropRect.left - videoRect.left) * scaleX;
-            let sy = (cropRect.top - videoRect.top) * scaleY;
-            let size = cropRect.width * scaleX;
-
-            const border = 10;
-            const bottomSpace = 30;
-            const finalSize = 400;
+            const border = 12;
+            const bottomSpace = 60;
+            const finalSize = 500;
 
             const scaleFactor = 3;
 
-            octx.setTransform(1, 0, 0, 1, 0, 0);
-
             output.width = (finalSize + border * 2) * scaleFactor;
-            output.height = (finalSize + border + bottomSpace) * scaleFactor;
+            output.height = output.width+ bottomSpace;
 
+            output.style.width = (finalSize + border * 2) + "px";
+            output.style.height = (finalSize + border + bottomSpace) + "px";
+
+            octx.setTransform(1, 0, 0, 1, 0, 0);
             octx.scale(scaleFactor, scaleFactor);
 
             octx.fillStyle = "white";
             octx.fillRect(0, 0, finalSize + border * 2, finalSize + border + bottomSpace);
+
+            const size = Math.min(tempCanvas.width, tempCanvas.height);
+
+            const sx = (tempCanvas.width - size) / 2;
+            const sy = (tempCanvas.height - size) / 2;
 
             octx.drawImage(
                 tempCanvas,
@@ -273,20 +212,21 @@
 
             if (document.getElementById("showLogo").checked) {
 
+                let videoRect = video.getBoundingClientRect();
                 let logoRect = logo.getBoundingClientRect();
 
-                let lx = (logoRect.left - videoRect.left) * scaleX;
-                let ly = (logoRect.top - videoRect.top) * scaleY;
+                let lx = logoRect.left - videoRect.left;
+                let ly = logoRect.top - videoRect.top;
 
-                let scale = finalSize / size;
+                let scale = finalSize / videoRect.width;
 
-                const logoWidth = 100;
+                const logoWidth = 90;
                 const logoHeight = logo.naturalHeight * (logoWidth / logo.naturalWidth);
 
                 octx.drawImage(
                     logo,
-                    (lx - sx) * scale + border,
-                    (ly - sy) * scale + border,
+                    lx * scale + border,
+                    ly * scale + border,
                     logoWidth,
                     logoHeight
                 );
@@ -296,13 +236,13 @@
             let text = document.getElementById("caption").value;
 
             octx.fillStyle = "black";
-            octx.font = "20px Arial";
+            octx.font = "22px Arial";
             octx.textAlign = "center";
 
             octx.fillText(
                 text,
-                (finalSize + border * 2) / 2,
-                finalSize + border + 20
+                (finalSize + border * 2)/1.4,
+                finalSize + border + 25
             );
 
         }
@@ -311,24 +251,12 @@
 
             let link = document.createElement("a");
 
-            link.download = "photo-frame.png";
-            link.href = output.toDataURL();
+            link.download = "aya-photo.png";
+            link.href = output.toDataURL("image/png");
 
             link.click();
 
         }
-
-        video.addEventListener("loadedmetadata", () => {
-
-    const cropSize = cropBox.offsetWidth;
-
-    const left = (video.clientWidth - cropSize) / 2;
-    const top = (video.clientHeight - cropSize) / 2;
-
-    cropBox.style.left = left + "px";
-    cropBox.style.top = top + "px";
-
-});
 
     </script>
 
