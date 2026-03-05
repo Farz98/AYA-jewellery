@@ -123,25 +123,12 @@
 
         let zoom = 1;
 
-        navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: { ideal: "environment" }
-            }
-        })
-            .then(stream => {
-                video.srcObject = stream;
-            });
-
-        video.addEventListener("click", () => {
-            capture();
-        });
-
         function capture() {
 
             tempCanvas.width = video.videoWidth;
             tempCanvas.height = video.videoHeight;
 
-            tctx.drawImage(video, 0, 0);
+            tctx.drawImage(video, 0, 0, tempCanvas.width, tempCanvas.height);
 
         }
 
@@ -257,6 +244,18 @@
             link.click();
 
         }
+
+        navigator.mediaDevices.getUserMedia({
+    video: {
+        facingMode: { ideal: "environment" },
+        width: { ideal: 1920 },
+        height: { ideal: 1080 },
+        aspectRatio: 1.777
+    }
+})
+.then(stream => {
+    video.srcObject = stream;
+});
 
     </script>
 
