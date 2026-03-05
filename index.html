@@ -181,16 +181,16 @@
             capture();
 
             const border = 12;
-            const bottomSpace = 60;
-            const finalSize = 500;
+            const bottomSpace = 40;
+            const finalSize = 420;
 
             const scaleFactor = 3;
 
             output.width = (finalSize + border * 2) * scaleFactor;
-            output.height = output.width+ bottomSpace;
+            output.height = (finalSize + border) * scaleFactor;
 
             output.style.width = (finalSize + border * 2) + "px";
-            output.style.height = (finalSize + border + bottomSpace) + "px";
+            output.style.height = (finalSize + border ) + "px";
 
             octx.setTransform(1, 0, 0, 1, 0, 0);
             octx.scale(scaleFactor, scaleFactor);
@@ -241,7 +241,7 @@
 
             octx.fillText(
                 text,
-                (finalSize + border * 2)/1.4,
+                (finalSize + border * 2) / 1.4,
                 finalSize + border + 25
             );
 
