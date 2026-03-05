@@ -30,8 +30,8 @@
         }
 
         #video {
-            width: 92vw;
-            max-width: 420px;
+            width: 420px;
+            height: 420px;
             aspect-ratio: 1/1;
             object-fit: cover;
             border-radius: 10px;
@@ -187,7 +187,7 @@
             const scaleFactor = 3;
 
             output.width = (finalSize + border * 2) * scaleFactor;
-            output.height = (finalSize + border) * scaleFactor;
+            output.height = (finalSize + border + bottomSpace) * scaleFactor;
 
             output.style.width = (finalSize + border * 2) + "px";
             output.style.height = (finalSize + border ) + "px";
