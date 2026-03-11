@@ -77,6 +77,11 @@
             background: white;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
+
+        #zoomSlider{
+    width:85vw;
+    max-width:320px;
+}
     </style>
 </head>
 
@@ -91,6 +96,10 @@
         <img id="logo" src="aya logo.png">
 
     </div>
+    <div class="input-group">
+    <label>Camera Zoom</label><br>
+    <input type="range" id="zoomSlider" step="0.1">
+</div>
 
     <div class="input-group">
         <input id="caption" placeholder="Add caption">
@@ -244,18 +253,56 @@
             link.click();
 
         }
+let track;
+const zoomSlider = document.getElementById("zoomSlider");
 
-        navigator.mediaDevices.getUserMedia({
-    video: {
-        facingMode: { ideal: "environment" },
-        width: { ideal: 1920 },
-        height: { ideal: 1080 },
-        aspectRatio: 1.777
-    }
-})
-.then(stream => {
+async function startCamera() {
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+            facingMode: { ideal: "environment" },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 }
+        }
+    });
+
     video.srcObject = stream;
-});
+
+    track = stream.getVideoTracks()[0];
+
+    const capabilities = track.getCapabilities();
+
+    if ("zoom" in capabilities) {
+
+        zoomSlider.min = capabilities.zoom.min;
+        zoomSlider.max = capabilities.zoom.max;
+        zoomSlider.step = capabilities.zoom.step || 0.1;
+        zoomSlider.value = capabilities.zoom.min;
+
+        zoomSlider.addEventListener("input", async () => {
+
+            await track.applyConstraints({
+                advanced: [{ zoom: zoomSlider.value }]
+            });
+
+        });
+
+    } else {
+
+        // fallback digital zoom
+        zoomSlider.min = 1;
+        zoomSlider.max = 3;
+        zoomSlider.step = 0.01;
+
+        zoomSlider.addEventListener("input", () => {
+            video.style.transform = `scale(${zoomSlider.value})`;
+        });
+
+    }
+
+}
+
+startCamera();
 
     </script>
 
